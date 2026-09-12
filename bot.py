@@ -19,31 +19,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def format_card(stats: dict, brand: str = "") -> str:
     part_no = stats["part_number"]
-    ebay_link = f"https://www.ebay.com/sch/i.html?_nkw={part_no}&LH_Complete=1&LH_Sold=1"
+    ebay_link = f"https://www.ebay.com/sch/i.html?_nkw={part_no}"
 
-    if stats.get("sold_count_90d", 0) == 0:
+    if stats.get("active_count", 0) == 0:
         return (
-            f"❌ *NO RECENT SALES (90 Days)*\n\n"
+            f"❌ *NO ACTIVE MARKET COMPS*\n\n"
             f"📦 *Part:* `{part_no}`\n"
-            f"⚠️ Demand is cold or obsolete without active buyers.\n\n"
-            f"🔗 [View Completed on eBay]({ebay_link})"
+            f"⚠️ Zero current sellers on eBay.\n\n"
+            f"🔗 [Search eBay Manually]({ebay_link})"
         )
 
-    pass_badge = "🟢 *VIABLE (PASS)*" if stats["status"] == "PASS" else "🔴 *SLOW DEMAND (FAIL)*"
-
     return (
-        f"{pass_badge}\n"
+        f"🟢 *MARKET DATA FOUND*\n"
         f"🏷️ *Brand:* {brand or 'N/A'}\n"
         f"📦 *Part:* `{part_no}`\n"
         f"━━━━━━━━━━━━━━━━━━━\n"
-        f"📈 *Demand (90 Days):* `{stats['sold_count_90d']} units sold`\n\n"
-        f"💰 *Sold Price Range:*\n"
-        f"  • *Min:* `${stats['min_usd']:.0f}` (AED {stats['min_aed']:.0f})\n"
-        f"  • *Avg:* `${stats['avg_usd']:.0f}` (AED {stats['avg_aed']:.0f})\n"
-        f"  • *Max:* `${stats['max_usd']:.0f}` (AED {stats['max_aed']:.0f})\n\n"
-        f"🎯 *Max Buy Target:* `AED {stats['target_buy_aed']:.0f}`\n"
+        f"📊 *Active Competition:* `{stats['active_count']} sellers`\n\n"
+        f"💰 *Current Market Prices:*\n"
+        f"  • *Lowest Listed:* `${stats['min_usd']:.0f}` (AED {stats['min_aed']:.0f})\n"
+        f"  • *Average Listed:* `${stats['avg_usd']:.0f}` (AED {stats['avg_aed']:.0f})\n"
+        f"  • *Highest Listed:* `${stats['max_usd']:.0f}` (AED {stats['max_aed']:.0f})\n\n"
+        f"🎯 *Max Recommended Buy (Sharjah):* `AED {stats['target_buy_aed']:.0f}`\n"
         f"━━━━━━━━━━━━━━━━━━━\n"
-        f"🔗 [Verify Sold Listings on eBay]({ebay_link})"
+        f"🔗 [View Live Listings on eBay]({ebay_link})"
     )
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
